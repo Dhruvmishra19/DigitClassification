@@ -1,0 +1,41 @@
+# This workflow is triggered on every push to the repository.
+name: GitHub Actions CI Demo
+
+on: [push]
+
+jobs:
+  Build-and-Test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Log some initial information
+      - name: Initial Echoes
+        run: |
+          echo "The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+          echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      # Step 2: Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # Step 3: Set up Python environment
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+          
+      # Step 4: Install dependencies from requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 5: Run the main python script to test if it executes without errors
+      - name: Run Python Script
+        run: python plot_digits_classification.py
+        
+      # Step 6: Log the final status
+      - name: Final Status Echo
+        run: echo "This job's status is ${{ job.status }}."

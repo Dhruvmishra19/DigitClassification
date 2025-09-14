@@ -1,7 +1,35 @@
 # This workflow is triggered on every push to the repository.
 name: GitHub Actions CI Demo
 
+# This workflow runs the training script and then a test script.
+name: GitHub Actions CI Demo
+
 on: [push]
+
+jobs:
+  Build-and-Test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Training Script
+        run: python plot_digits_classification.py
+        
+      - name: Run Test Script
+        run: python test_model.py
+        
+      - name: Final Status Echo
+        run: echo "This job's status is ${{ job.status }}."on: [push]
 
 jobs:
   Build-and-Test:

@@ -1,0 +1,11 @@
+    # Ignore Python's cache directory
+__pycache__/
+
+# Ignore all saved model files
+models/
+
+# Ignore dummy secrets file
+secrets.txt
+3.  **Create a dummy secrets file** to test the ignore rule.
+```bash
+echo "API_KEY=dummy12345" > secrets.txt

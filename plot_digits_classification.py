@@ -126,3 +126,66 @@ print(
     "Classification report rebuilt from confusion matrix:\n"
     f"{metrics.classification_report(y_true, y_pred)}\n"
 )
+# plot_digits_classification.py
+# This script trains two models (SVM and Decision Tree), compares their
+# test accuracies, and saves the best-performing model to a file.
+
+import os
+from joblib import dump
+from sklearn import svm, tree, metrics
+from utils import load_data, preprocess_data, split_train_test
+
+def main():
+    """
+    Main function to train, evaluate, and save the best model.
+    """
+    # 1. Load and prepare the data
+    digits_data = load_data()
+    X = preprocess_data(digits_data)
+    y = digits_data.target
+
+    # 2. Split data into training and testing sets
+    X_train, X_test, y_train, y_test = split_train_test(
+        X, y, test_size=0.3, shuffle=True
+    )
+
+    # 3. Define the classifiers to be compared
+    classifiers = {
+        'SVM': svm.SVC(gamma=0.001),
+        'DecisionTree': tree.DecisionTreeClassifier()
+    }
+
+    best_model = None
+    best_accuracy = 0.0
+    best_model_name = ""
+
+    # 4. Loop through each classifier to train and evaluate it
+    for name, clf in classifiers.items():
+        print(f"--- Training {name} ---")
+        clf.fit(X_train, y_train)
+        predicted = clf.predict(X_test)
+        accuracy = metrics.accuracy_score(y_test, predicted)
+        
+        # Display the test accuracy
+        print(f"Test accuracy of {name}: {accuracy:.4f}")
+
+        # Check if this model is the best one so far
+        if accuracy > best_accuracy:
+            best_accuracy = accuracy
+            best_model = clf
+            best_model_name = name
+
+    print(f"\n--- Best model is {best_model_name} with an accuracy of {best_accuracy:.4f} ---")
+
+    # 5. Save the best model artifact
+    # Create a directory to store models if it doesn't already exist
+    model_dir = "models"
+    os.makedirs(model_dir, exist_ok=True)
+    model_path = os.path.join(model_dir, "best_model.joblib")
+    
+    dump(best_model, model_path)
+    print(f"Best model has been saved to '{model_path}'")
+
+
+if __name__ == "__main__":
+    main()
